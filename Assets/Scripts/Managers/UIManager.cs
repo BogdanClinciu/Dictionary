@@ -10,12 +10,30 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private GameObject resultsContainer;
 
+    [Space]
+    [Header("Add new word")]
+
     [SerializeField]
     private InputField newWordNameInput;
     [SerializeField]
     private InputField newWordDescriptionInput;
     [SerializeField]
     private Text errorMessage;
+
+    [Space]
+    [Header("Options panel")]
+    [HideInInspector]
+    public DictionaryEntry selectedElement;
+    [SerializeField]
+    private GameObject optionsPanel;
+    [SerializeField]
+    private GameObject optionsDropdown;
+    [SerializeField]
+    private GameObject editPanel;
+    [SerializeField]
+    private Text wordName;
+    [SerializeField]
+    private InputField newDescriptionInput;
 
     public void PopulateResultList(Dictionary<string, string> words)
     {
@@ -36,7 +54,7 @@ public class UIManager : MonoBehaviour
         //force update canvas to reposition elements in UI
         Canvas.ForceUpdateCanvases();
     }
-
+    #region New words
     public DictionaryEntry ValidateNewEntry()
     {
         ResetErrorMessage();
@@ -60,7 +78,51 @@ public class UIManager : MonoBehaviour
         newWordNameInput.text = "";
         newWordDescriptionInput.text = "";
     }
+    #endregion
 
+    #region Options panel
+
+    public void OpenOptionsPanel(DictionaryEntry elem)
+    {
+        selectedElement = elem;
+        optionsPanel.SetActive(true);
+        optionsDropdown.transform.position = Input.mousePosition;
+    }
+
+    public void CloseOptionsPanel()
+    {
+        optionsPanel.SetActive(false);
+    }
+
+    public void OpenEditPanel()
+    {
+        editPanel.SetActive(true);
+        wordName.text = selectedElement.Name;
+        newDescriptionInput.text = selectedElement.Description;
+        Debug.Log(newDescriptionInput.text);
+    }
+
+    public DictionaryEntry ValidateDescription()
+    {
+        ResetErrorMessage();
+
+        if (string.IsNullOrEmpty(newDescriptionInput.text))
+        {
+            errorMessage.text = "Description should not be empty!";
+            return null;
+        }
+
+        return new DictionaryEntry(selectedElement.Name, newDescriptionInput.text);
+    }
+
+    public void CloseEditPanel()
+    {
+        editPanel.SetActive(false);
+        ResetErrorMessage();
+    }
+
+
+    #endregion
     public void ResetErrorMessage()
     {
         errorMessage.text = "";

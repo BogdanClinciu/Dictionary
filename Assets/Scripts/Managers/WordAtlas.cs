@@ -34,4 +34,17 @@ public class WordAtlas : MonoBehaviour
         }
         FileManager.WriteFile(wordsDictionary);
     }
+
+    public void RemoveEntry(string name)
+    {
+        wordsDictionary.Remove(name);
+        FileManager.WriteFile(wordsDictionary);
+    }
+
+    public void UpdateEntry(DictionaryEntry newEntry)
+    {
+        Debug.Log(newEntry.Name + "  " + newEntry.Description);
+        wordsDictionary[newEntry.Name] = newEntry.Description;
+        FileManager.WriteFile(wordsDictionary);
+    }
 }
