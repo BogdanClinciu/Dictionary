@@ -7,8 +7,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance = null;
 
     public UIManager uim;
-    [SerializeField]
-    private WordAtlas wat;
+    public WordAtlas wat;
 
     private void Awake()
     {

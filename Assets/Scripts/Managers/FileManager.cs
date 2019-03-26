@@ -9,9 +9,9 @@ public static class FileManager
 
     private static readonly string filename = "PlayerData.json";
 
-    public static Dictionary<string, string> ImportDictionary()
+    public static SortedDictionary<string, string> ImportDictionary()
     {
-        Dictionary<string, string> importedDictionary = new Dictionary<string, string>();
+        SortedDictionary<string, string> importedDictionary = new SortedDictionary<string, string>();
         FullDictionary fd = new FullDictionary();
 
         //read the json file and convert it to FullDictionary
@@ -21,7 +21,7 @@ public static class FileManager
             fd = JsonUtility.FromJson<FullDictionary>(json);
         }
 
-        //convert FullDictionary to Dictionary<string,string>
+        //convert FullDictionary to SortedDictionary<string,string>
         foreach (var item in fd.fullDict)
         {
             importedDictionary.Add(item.Name, item.Description);
@@ -31,7 +31,7 @@ public static class FileManager
         return importedDictionary;
     }
 
-    public static void WriteFile(Dictionary<string,string> dict)
+    public static void WriteFile(SortedDictionary<string,string> dict)
     {
         //Convert dictionary back to FullDictionary
         FullDictionary fd = new FullDictionary();

@@ -5,7 +5,7 @@ using UnityEngine;
 public class WordAtlas : MonoBehaviour
 {
 
-    public Dictionary<string, string> wordsDictionary = new Dictionary<string, string>();
+    public SortedDictionary<string, string> wordsDictionary = new SortedDictionary<string, string>();
 
     private void Awake()
     {
@@ -30,7 +30,7 @@ public class WordAtlas : MonoBehaviour
     {
         if (!wordsDictionary.ContainsKey(newEntry.Name))
         {
-            wordsDictionary.Add(newEntry.Name, newEntry.Description);
+            wordsDictionary.Add(Utils.FirstCharToUpper(newEntry.Name), newEntry.Description);
         }
         FileManager.WriteFile(wordsDictionary);
     }
@@ -43,7 +43,6 @@ public class WordAtlas : MonoBehaviour
 
     public void UpdateEntry(DictionaryEntry newEntry)
     {
-        Debug.Log(newEntry.Name + "  " + newEntry.Description);
         wordsDictionary[newEntry.Name] = newEntry.Description;
         FileManager.WriteFile(wordsDictionary);
     }

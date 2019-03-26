@@ -9,7 +9,7 @@ public class UIManager : MonoBehaviour
     private DictionaryUIElement entryPrefab;
     [SerializeField]
     private GameObject resultsContainer;
-
+    private List<DictionaryUIElement> entryElementList = new List<DictionaryUIElement>();
     [Space]
     [Header("Add new word")]
 
@@ -35,7 +35,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private InputField newDescriptionInput;
 
-    public void PopulateResultList(Dictionary<string, string> words)
+    public void PopulateResultList(SortedDictionary<string, string> words)
     {
         //clean old entries
         foreach (Transform item in resultsContainer.transform)
@@ -49,10 +49,30 @@ public class UIManager : MonoBehaviour
             DictionaryUIElement elem = Instantiate(entryPrefab);
             elem.SetValues(item.Key, item.Value);
             elem.transform.parent = resultsContainer.transform;
+            entryElementList.Add(elem);
         }
 
         //force update canvas to reposition elements in UI
         Canvas.ForceUpdateCanvases();
+    }
+
+    public void RevertOrder()
+    {
+        InitializeElementsList();
+        for (int i = 0; i < entryElementList.Count; i++)
+        {
+            entryElementList[i].transform.SetSiblingIndex(entryElementList.Count - i - 1);
+        }
+        //entryElementList.Reverse();
+    }
+
+    private void InitializeElementsList()
+    {
+        entryElementList = new List<DictionaryUIElement>();
+        foreach (DictionaryUIElement item in resultsContainer.GetComponentsInChildren<DictionaryUIElement>())
+        {
+            entryElementList.Add(item);
+        }
     }
     #region New words
     public DictionaryEntry ValidateNewEntry()
@@ -99,7 +119,6 @@ public class UIManager : MonoBehaviour
         editPanel.SetActive(true);
         wordName.text = selectedElement.Name;
         newDescriptionInput.text = selectedElement.Description;
-        Debug.Log(newDescriptionInput.text);
     }
 
     public DictionaryEntry ValidateDescription()
@@ -123,6 +142,8 @@ public class UIManager : MonoBehaviour
 
 
     #endregion
+
+
     public void ResetErrorMessage()
     {
         errorMessage.text = "";
