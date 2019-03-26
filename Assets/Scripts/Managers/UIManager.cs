@@ -53,6 +53,8 @@ public class UIManager : MonoBehaviour
         }
 
         //force update canvas to reposition elements in UI
+        Debug.Log("Canvas forced");
+        LayoutRebuilder.ForceRebuildLayoutImmediate(resultsContainer.GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
     }
 
@@ -106,6 +108,7 @@ public class UIManager : MonoBehaviour
     {
         selectedElement = elem;
         optionsPanel.SetActive(true);
+        SetOptionsAnchor();
         optionsDropdown.transform.position = Input.mousePosition;
     }
 
@@ -140,6 +143,30 @@ public class UIManager : MonoBehaviour
         ResetErrorMessage();
     }
 
+    private void SetOptionsAnchor()
+    {
+        float xValue = 0;
+        float yValue = 0;
+        if (Input.mousePosition.x + optionsDropdown.GetComponent<RectTransform>().sizeDelta.x > Screen.width)
+        {
+            xValue = 1;
+        }
+        else
+        {
+            xValue = 0;
+        }
+        
+        if (Input.mousePosition.y - optionsDropdown.GetComponent<RectTransform>().sizeDelta.y > 0)
+        {
+            yValue = 1;
+        }
+        else
+        {
+            yValue = 0;
+        }
+
+        optionsDropdown.GetComponent<RectTransform>().pivot = new Vector2(xValue, yValue);
+    }
 
     #endregion
 
