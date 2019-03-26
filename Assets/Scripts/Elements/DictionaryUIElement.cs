@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
@@ -22,11 +20,15 @@ public class DictionaryUIElement : MonoBehaviour, IPointerClickHandler
         descriptionText.text = newDescription;
     }
     
+    /// <summary>
+    /// Track right mouse click to open options panel
+    /// </summary>
+    /// <param name="eventData"></param>
     public void OnPointerClick(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            GameManager.instance.uim.OpenOptionsPanel(new DictionaryEntry(nameText.text, descriptionText.text));
+            GameManager.instance.uiManagerComponent.OpenOptionsPanel(new DictionaryEntry(nameText.text, descriptionText.text));
         }
     }
 }

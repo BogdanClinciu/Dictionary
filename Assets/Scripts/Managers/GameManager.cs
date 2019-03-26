@@ -1,16 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
 
-    public UIManager uim;
-    public WordAtlas wat;
+    public UIManager uiManagerComponent;
+    public WordAtlas wordAtlasComponent;
 
     private void Awake()
     {
+        //create singleton instance
         if(instance == null)
         {
             instance = this;
@@ -25,51 +24,70 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        //Display atlas
         UpdateResults();
     }
 
+    /// <summary>
+    /// Add new word to dictionary
+    /// </summary>
     public void AddNewEntry()
     {
-        DictionaryEntry newEntry = uim.ValidateNewEntry();
+        //validate input field
+        DictionaryEntry newEntry = uiManagerComponent.ValidateNewEntry();
 
         if(newEntry != null)
         {
-            if(wat.ValidateNewEntry(newEntry.Name))
+            //if input is valid, check if the word is already in the dictionary
+            if(wordAtlasComponent.ValidateNewEntry(newEntry.Name))
             {
-                wat.AddEntry(newEntry);
-                uim.ClearNewEntry();
+                //add word to atlas, reset input fields, display the new element
+                wordAtlasComponent.AddEntry(newEntry);
+                uiManagerComponent.ClearNewEntry();
                 UpdateResults();
             }
             else
             {
-                uim.ShowAleradyExistsError();
+                uiManagerComponent.ShowErrorMessage(Constants.ERROR_ALREADY_EXISTS);
             }
         }
     }
 
+    /// <summary>
+    /// Remove selected word from atlas
+    /// </summary>
     public void DeleteEntry()
     {
-        DictionaryEntry elem = uim.selectedElement;
-        wat.RemoveEntry(elem.Name);
-        uim.CloseOptionsPanel();
+        DictionaryEntry elem = uiManagerComponent.selectedElement;
+        
+        //remove the word from atlas, close the options panel, update displayed list
+        wordAtlasComponent.RemoveEntry(elem.Name);
+        uiManagerComponent.CloseOptionsPanel();
         UpdateResults();
     }
 
+    /// <summary>
+    /// Update description of selected word
+    /// </summary>
     public void UpdateEntry()
     {
-        DictionaryEntry newEntry = uim.ValidateDescription();
+        DictionaryEntry newEntry = uiManagerComponent.ValidateDescription();
 
         if(newEntry!= null)
         {
-            wat.UpdateEntry(newEntry);
-            uim.CloseEditPanel();
-            uim.CloseOptionsPanel();
+            //if the description is valid, update it in atlas, close panels, update display
+            wordAtlasComponent.UpdateEntry(newEntry);
+            uiManagerComponent.CloseEditPanel();
+            uiManagerComponent.CloseOptionsPanel();
             UpdateResults();
         }
     }
 
+    /// <summary>
+    /// Display atlas
+    /// </summary>
     private void UpdateResults()
     {
-        uim.PopulateResultList(wat.wordsDictionary);
+        uiManagerComponent.PopulateResultList(wordAtlasComponent.wordsDictionary);
     }
 }

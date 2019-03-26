@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +9,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private GameObject resultsContainer;
     private List<DictionaryUIElement> entryElementList = new List<DictionaryUIElement>();
+
     [Space]
     [Header("Add new word")]
 
@@ -22,6 +22,7 @@ public class UIManager : MonoBehaviour
 
     [Space]
     [Header("Options panel")]
+
     [HideInInspector]
     public DictionaryEntry selectedElement;
     [SerializeField]
@@ -35,6 +36,10 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private InputField newDescriptionInput;
 
+    /// <summary>
+    /// Show the current element selection on screen
+    /// </summary>
+    /// <param name="words"></param>
     public void PopulateResultList(SortedDictionary<string, string> words)
     {
         //clean old entries
@@ -52,22 +57,29 @@ public class UIManager : MonoBehaviour
             entryElementList.Add(elem);
         }
 
-        //force update canvas to reposition elements in UI
-        Debug.Log("Canvas forced");
+        //force update canvas to reposition elements in UI and rebuild layouts
         LayoutRebuilder.ForceRebuildLayoutImmediate(resultsContainer.GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
     }
 
+    /// <summary>
+    /// Toggle between element sorting A-Z/Z-A
+    /// </summary>
     public void RevertOrder()
     {
+        //get refference to the elements on screen
         InitializeElementsList();
+
+        //revert the order in hierarchy to avoid instantiating the same elements in different order
         for (int i = 0; i < entryElementList.Count; i++)
         {
             entryElementList[i].transform.SetSiblingIndex(entryElementList.Count - i - 1);
         }
-        //entryElementList.Reverse();
     }
 
+    /// <summary>
+    /// Set refference to the current on-screen words
+    /// </summary>
     private void InitializeElementsList()
     {
         entryElementList = new List<DictionaryUIElement>();
@@ -76,25 +88,37 @@ public class UIManager : MonoBehaviour
             entryElementList.Add(item);
         }
     }
+
     #region New words
+
+    /// <summary>
+    /// Input validation for new word name and description
+    /// </summary>
+    /// <returns>Returns false is the input is not valid. Returns new DictionaryEntry otherwise</returns>
     public DictionaryEntry ValidateNewEntry()
     {
-        ResetErrorMessage();
+        ShowErrorMessage(Constants.ERROR_CLEAR);
 
         if (string.IsNullOrEmpty(newWordNameInput.text) || string.IsNullOrEmpty(newWordDescriptionInput.text))
         {
-            errorMessage.text = "Fields should not be empty!";
+            ShowErrorMessage(Constants.ERROR_INVALID_INPUT);
             return null;
         }
 
         return new DictionaryEntry(newWordNameInput.text, newWordDescriptionInput.text);
     }
 
-    public void ShowAleradyExistsError()
+    /// <summary>
+    /// Show error message 
+    /// </summary>
+    public void ShowErrorMessage(string error)
     {
-        errorMessage.text = "Word already exists!";
+        errorMessage.text = error;
     }
 
+    /// <summary>
+    /// Reset new word input fields
+    /// </summary>
     public void ClearNewEntry()
     {
         newWordNameInput.text = "";
@@ -104,6 +128,10 @@ public class UIManager : MonoBehaviour
 
     #region Options panel
 
+    /// <summary>
+    /// Open options panel; set position to mouse coordinates
+    /// </summary>
+    /// <param name="elem"></param>
     public void OpenOptionsPanel(DictionaryEntry elem)
     {
         selectedElement = elem;
@@ -112,11 +140,17 @@ public class UIManager : MonoBehaviour
         optionsDropdown.transform.position = Input.mousePosition;
     }
 
+    /// <summary>
+    /// Close options panel
+    /// </summary>
     public void CloseOptionsPanel()
     {
         optionsPanel.SetActive(false);
     }
 
+    /// <summary>
+    /// Open edit panel; initialize with selected word's name and description
+    /// </summary>
     public void OpenEditPanel()
     {
         editPanel.SetActive(true);
@@ -124,25 +158,35 @@ public class UIManager : MonoBehaviour
         newDescriptionInput.text = selectedElement.Description;
     }
 
+    /// <summary>
+    /// Validate input description
+    /// </summary>
+    /// <returns>Return null if the input is not valid. Return new DictionaryEntry otherwise</returns>
     public DictionaryEntry ValidateDescription()
     {
-        ResetErrorMessage();
+        ShowErrorMessage(Constants.ERROR_CLEAR);
 
         if (string.IsNullOrEmpty(newDescriptionInput.text))
         {
-            errorMessage.text = "Description should not be empty!";
+            ShowErrorMessage(Constants.ERROR_INVALID_INPUT);
             return null;
         }
 
         return new DictionaryEntry(selectedElement.Name, newDescriptionInput.text);
     }
 
+    /// <summary>
+    /// Close edit panel; reset error message
+    /// </summary>
     public void CloseEditPanel()
     {
         editPanel.SetActive(false);
-        ResetErrorMessage();
+        ShowErrorMessage(Constants.ERROR_CLEAR);
     }
 
+    /// <summary>
+    /// Set dropdown's pivot based on mouse coordinates to avoid showing the panel outside the screen
+    /// </summary>
     private void SetOptionsAnchor()
     {
         float xValue = 0;
@@ -155,7 +199,7 @@ public class UIManager : MonoBehaviour
         {
             xValue = 0;
         }
-        
+
         if (Input.mousePosition.y - optionsDropdown.GetComponent<RectTransform>().sizeDelta.y > 0)
         {
             yValue = 1;
@@ -169,11 +213,4 @@ public class UIManager : MonoBehaviour
     }
 
     #endregion
-
-
-    public void ResetErrorMessage()
-    {
-        errorMessage.text = "";
-    }
-
 }

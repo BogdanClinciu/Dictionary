@@ -1,14 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.UI;
 
 public static class FileManager
 {
 
     private static readonly string filename = "PlayerData.json";
 
+    /// <summary>
+    /// Read list from Json and create a SortedDictionary of entries
+    /// </summary>
+    /// <returns>Returns processed sorted dictionary</returns>
     public static SortedDictionary<string, string> ImportDictionary()
     {
         SortedDictionary<string, string> importedDictionary = new SortedDictionary<string, string>();
@@ -31,6 +33,10 @@ public static class FileManager
         return importedDictionary;
     }
 
+    /// <summary>
+    /// Save the dictionary in file
+    /// </summary>
+    /// <param name="dict"></param>
     public static void WriteFile(SortedDictionary<string,string> dict)
     {
         //Convert dictionary back to FullDictionary
